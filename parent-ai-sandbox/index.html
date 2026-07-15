@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parent AI Sandbox</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <section class="panel">
+          <p class="eyebrow">星星照护所 · Parent AI Sandbox</p>
+          <h1>第 1 周家长沟通测试</h1>
+          <p class="muted">事件优先；未触发事件时才用原有家长话题兜底。</p>
+        </section>
+
+        <section class="panel">
+          <h2>本周触发事件</h2>
+          <div id="eventToggles" class="toggle-list"></div>
+        </section>
+
+        <section class="panel">
+          <h2>家长沟通风格</h2>
+          <select id="parentStyle"></select>
+          <p id="styleDescription" class="muted"></p>
+        </section>
+
+        <section class="panel">
+          <h2>运行模式</h2>
+          <label class="switch-row">
+            <input id="useApi" type="checkbox" />
+            <span>使用 API agent ensemble</span>
+          </label>
+          <p id="apiStatus" class="muted">正在检查后端状态...</p>
+          <button id="resetBtn" class="secondary-btn" type="button">重置对话</button>
+        </section>
+
+        <section class="panel">
+          <h2>测试回复</h2>
+          <div id="sampleReplies" class="sample-list"></div>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">动态任务判定</p>
+            <h2 id="conversationTitle">周五家长沟通</h2>
+          </div>
+          <div class="score-chip">
+            <span>信任</span>
+            <strong id="trustScore">50</strong>
+          </div>
+        </header>
+
+        <section class="content-grid">
+          <section class="chat-panel">
+            <div id="arcStepper" class="arc-stepper"></div>
+            <div id="chatLog" class="chat-log"></div>
+            <form id="replyForm" class="reply-form">
+              <textarea
+                id="playerReply"
+                rows="5"
+                placeholder="输入玩家作为照护老师的回复..."
+              ></textarea>
+              <button id="sendBtn" type="submit">发送并评分</button>
+            </form>
+          </section>
+
+          <aside class="analysis-panel">
+            <section class="panel">
+              <h2>当前事件主轴</h2>
+              <div id="topicSummary" class="topic-summary"></div>
+            </section>
+            <section class="panel">
+              <h2>评分反馈</h2>
+              <div id="evaluation" class="evaluation empty">发送一条回复后，这里会显示评分、风险点和下一轮家长反应。</div>
+            </section>
+            <section class="panel">
+              <h2>专业标准</h2>
+              <div id="standards" class="standards"></div>
+            </section>
+          </aside>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
