@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>星星照护所</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #020b1b;
+      }
+
+      #boot-splash {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  visibility: visible;
+  overflow: hidden;
+
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(circle at 52% 78%, rgba(247, 184, 83, 0.22) 0%, rgba(247, 184, 83, 0.08) 18%, transparent 42%),
+    radial-gradient(circle at 82% 18%, rgba(88, 72, 128, 0.32) 0%, transparent 34%),
+    linear-gradient(180deg, #020b1b 0%, #07142b 42%, #101f3f 72%, #151826 100%);
+
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+#boot-splash.ready {
+  visibility: visible;
+}
+
+#boot-splash.fade-out {
+  opacity: 0;
+}
+      
+      #boot-splash p {
+        margin: 0;
+        font-family: "MaokenZhuyuan", "Microsoft YaHei", "PingFang SC", sans-serif;
+        font-size: 32px;
+        color: #f6d48a;
+        line-height: 1.5;
+        text-align: center;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      }
+
+      #boot-splash .enter {
+        margin-top: 18px;
+        font-size: 30px;
+        animation: bootPulse 1.25s ease-in-out infinite;
+      }
+
+      #boot-splash .language-toggle {
+        margin-top: 14px;
+        padding: 8px 22px;
+        border: 2px solid rgba(246, 212, 138, 0.76);
+        border-radius: 999px;
+        background: rgba(8, 19, 42, 0.48);
+        font-size: 24px;
+        line-height: 1.35;
+      }
+
+      #boot-splash .continue-tip {
+        margin-top: 12px;
+        font-size: 22px;
+        color: rgba(246, 212, 138, 0.76);
+      }
+
+      #boot-splash .device-tip {
+        margin-top: 10px;
+        font-size: 20px;
+        color: rgba(246, 212, 138, 0.82);
+      }
+
+      @keyframes bootPulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.45; transform: scale(1.035); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="orientation-lock" aria-hidden="true">
+      <div class="orientation-lock-card">
+        <div class="orientation-lock-icon">↔</div>
+        <div>请将手机横屏游玩</div>
+      </div>
+    </div>
+    <div id="boot-splash">
+      <p>猪猪队</p>
+      <p>制作</p>
+      <p>❤小红花游戏赛道❤</p>
+      <p class="device-tip">建议使用电脑端体验，手机端部分视频与图片生成可能受限</p>
+      <p class="enter">点击进入照护所</p>
+      <p id="boot-language-toggle" class="language-toggle">语言：简体中文</p>
+    </div>
+    <div id="game-container"></div>
+    <script>
+      (function bootLanguageToggle() {
+        var key = 'starcare_language';
+        var zhHant = 'zh-Hant';
+        var btn = document.getElementById('boot-language-toggle');
+        if (!btn) return;
+
+        function getLanguage() {
+          try {
+            return localStorage.getItem(key) === zhHant ? zhHant : 'zh-Hans';
+          } catch (error) {
+            return 'zh-Hans';
+          }
+        }
+
+        function sync() {
+          var lang = getLanguage();
+          document.documentElement.lang = lang === zhHant ? 'zh-Hant' : 'zh-CN';
+          btn.textContent = lang === zhHant ? '語言：繁體中文' : '语言：简体中文';
+        }
+
+        btn.addEventListener('pointerdown', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          var next = getLanguage() === zhHant ? 'zh-Hans' : zhHant;
+          try {
+            localStorage.setItem(key, next);
+          } catch (error) {}
+          sync();
+        });
+
+        sync();
+      })();
+
+      (function lockMobileViewport() {
+        var root = document.documentElement;
+
+        function isMobileLike() {
+          return window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+        }
+
+        function syncViewport() {
+          var portrait = window.innerHeight > window.innerWidth;
+          document.body.classList.toggle('mobile-portrait', isMobileLike() && portrait);
+          root.style.setProperty('--app-height', window.innerHeight + 'px');
+          root.style.setProperty('--app-width', window.innerWidth + 'px');
+          window.scrollTo(0, 0);
+        }
+
+        document.addEventListener('gesturestart', function (event) {
+          event.preventDefault();
+        });
+        document.addEventListener('touchmove', function (event) {
+          var target = event.target;
+          var tagName = target && target.tagName ? target.tagName.toLowerCase() : '';
+          if (tagName !== 'textarea' && tagName !== 'input') {
+            event.preventDefault();
+          }
+        }, { passive: false });
+
+        window.addEventListener('resize', syncViewport);
+        window.addEventListener('orientationchange', function () {
+          setTimeout(syncViewport, 120);
+        });
+        window.addEventListener('focusin', function () {
+          setTimeout(function () { window.scrollTo(0, 0); }, 80);
+        });
+        syncViewport();
+      })();
+
+      // Align #boot-splash to the visible game area.
+      (function alignBootSplash() {
+        var splash = document.getElementById('boot-splash');
+        var container = document.getElementById('game-container');
+        if (!splash || !container) return;
+
+        function sync() {
+          // Prefer the canvas rect once Phaser has created it.
+          var canvas = container.querySelector('canvas');
+          var rect = (canvas || container).getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0) {
+            splash.style.left = rect.left + 'px';
+            splash.style.top = rect.top + 'px';
+            splash.style.width = rect.width + 'px';
+            splash.style.height = rect.height + 'px';
+            splash.classList.add('ready');
+          }
+        }
+
+        sync();
+        window.addEventListener('resize', sync);
+        window.addEventListener('orientationchange', sync);
+        // Keep the splash aligned when Phaser creates or resizes the canvas.
+        var mo = new MutationObserver(sync);
+        mo.observe(container, { childList: true, subtree: true });
+        // Fallback: resync for a few seconds while fonts and canvas settle.
+        var start = Date.now();
+        var iv = setInterval(function () {
+          sync();
+          if (Date.now() - start > 3000) clearInterval(iv);
+        }, 200);
+      })();
+    </script>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+
